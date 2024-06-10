@@ -22,7 +22,7 @@ secretsmanager = boto3.client('secretsmanager')
 def finding_parser(finding):
     account = finding["AwsAccountId"]
     description = finding["Description"]
-    severity = finding["Severity"]["Label"]
+    severity = get_priority(finding["Severity"]["Label"])
     title = finding["Title"]
     finding_id = finding["Id"]
     product_arn = finding["ProductArn"]
@@ -32,6 +32,17 @@ def finding_parser(finding):
 
     return account, description, severity, title, finding_id, product_arn, resources, status, recordstate  # returns data
 
+def get_priority(severity):
+    if severity == "CRITICAL":
+        return "Highest"
+    elif severity == "HIGH":
+        return "High"
+    elif severity == "MEDIUM":
+        return "Medium"
+    elif severity == "LOW":
+        return "Low"
+    else:
+        return "Lowest"
 
 def create_jira(jira_client, project_key, issuetype_name, product_arn, account, region, description, resources, severity, title, id):
 
@@ -111,15 +122,18 @@ def lambda_handler(event, context):  # Main function
                                                 'Reopening JIRA Ticket {0}'.format(jira_issue))
                 elif recordstate == "ACTIVE" and status == "NEW" and is_automated_check(finding):
                     # Check if in automatically list of findings to create automatically
-                    jira_client=utils.get_jira_client(secretsmanager,jira_instance,jira_credentials)
-                    jira_issue=utils.get_jira_finding(
-                        jira_client, finding_id, project_key, issuetype_name)
+                    # jira_client=utils.get_jira_client(secretsmanager,jira_instance,jira_credentials)
+                    # jira_issue=utils.get_jira_finding(
+                    #     jira_client, finding_id, project_key, issuetype_name)
 
-                    if not jira_issue:
-                        logger.info(
-                            "Creating ticket automatically for {0}".format(finding_id))
-                        create_jira(jira_client, project_key, issuetype_name, product_arn, account,
-                                    region, description, resources, severity, title, finding_id)
+                    # if not jira_issue:
+                    #     logger.info(
+                    #         "Creating ticket automatically for {0}".format(finding_id))
+                    #     create_jira(jira_client, project_key, issuetype_name, product_arn, account,
+                    #                 region, description, resources, severity, title, finding_id)
+                    
+                    logger.info(
+                        "Disabled creation ticket automatically {}".format(finding_id))
 
                 else:
                     logger.info(

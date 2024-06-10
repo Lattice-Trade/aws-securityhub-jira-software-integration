@@ -1,9 +1,25 @@
 {
     "Controls" : {
-        "eu-west-1": [
-         "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0/rule/1.22"
+        "us-east-2": [
+         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0",
+         "AWSInspector",
+         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/EC2.2",
+         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/SSM.2",
+         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/RDS.4",
+         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/S3.9",
+         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/S3.5",
+         "arn:aws:securityhub:::security-control/DMS.6",
+         "arn:aws:securityhub:::security-control/CodeBuild.4",
+        "arn:aws:securityhub:::security-control/NetworkFirewall.6"
      ],
         "default": [
+            "aws-foundational-security-best-practices/v/1.0.0/EC2.2",
+            "aws-foundational-security-best-practices/v/1.0.0/SSM.2",
+            "aws-foundational-security-best-practices/v/1.0.0/RDS.4",
+            "aws-foundational-security-best-practices/v/1.0.0/S3.9",
+            "aws-foundational-security-best-practices/v/1.0.0/S3.5",
+            "aws-foundational-security-best-practices/v/1.0.0/SecretsManager.4",
+            "arn:aws:securityhub:us-east-2::standards/aws-foundational-security-best-practices/v/1.0.0/S3.2"
      ]
     } 
  }

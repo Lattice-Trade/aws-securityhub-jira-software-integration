@@ -155,6 +155,7 @@ def create_ticket(jira_client, project_key, issuetype_name, account, region, des
         "summary": "AWS Security Issue :: {} :: {} :: {}".format(account, region, title),
         "labels": ["aws-sec-%s" % digest],
         "priority": {"name": severity.capitalize()},
+        #"priority": {"name": "Medium"},
         "description": """ *What is the problem?*
         We detected a security finding within the AWS account {} you are responsible for.
         {}
@@ -198,7 +199,7 @@ def update_securityhub(securityhub_client, id, product_arn, status, note):
 
 
 def is_closed(jira_client, issue):
-    return issue.fields.status.name == "Resolved"
+    return issue.fields.status.name == "Fixed"
 
 
 def is_suppressed(jira_client, issue):
