@@ -1,0 +1,15 @@
+--max-results 100aws securityhub get-findings --max-results 100 --query 'Findings[?AwsAccountId==`916775992448` || AwsAccountId==`133452444714`][?ResourceType==`AwsEcrContainerImage`][?Workflow.Status==`NEW` || Workflow.Status==`NOTIFIED` || Workflow.Status==`RESOLVED`][?RecordState==`ACTIVE`]' | jq '.[].Id
+
+
+
+","ProductArn":"arn:aws:securityhub:us-east-2::product/aws/inspector"} para la cuenta 133452444714 a SUPPRESSED...
+{
+    "ProcessedFindings": [
+        {
+            "Id": "arn:aws:inspector2:us-east-2:133452444714:finding/0ab3e02dd7a04575763ae25cc173baa9",
+            "ProductArn": "arn:aws:securityhub:us-east-2::product/aws/inspector"
+        }
+    ],
+    "UnprocessedFindings": []
+}
+Actualizando el hallazgo {"Id":"arn:aws:inspector2:us-east-2:133452444714:finding/c9437431d7cb904930369ea5cc2c5d7a
