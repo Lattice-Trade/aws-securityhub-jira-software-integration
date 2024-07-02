@@ -29,8 +29,11 @@ def finding_parser(finding):
     resources = [resource.get('Id') for resource in finding["Resources"]]
     status = finding["Workflow"]["Status"]
     recordstate = finding["RecordState"]
+   # resource_type = finding["ResourcesType"]
+    resource_type = finding["Resources"][0]["Type"]
+    repository_name = finding["Resources"][0]["Details"]["AwsEcrContainerImage"]["RepositoryName"] if resource_type == "AwsEcrContainerImage" else None
 
-    return account, description, severity, title, finding_id, product_arn, resources, status, recordstate  # returns data
+    return account, description, severity, title, finding_id, product_arn, resources, status, recordstate, resource_type, repository_name  # returns data
 
 def get_priority(severity):
     if severity == "CRITICAL":
@@ -43,13 +46,21 @@ def get_priority(severity):
         return "Low"
     else:
         return "Lowest"
+    
+def get_jira_team(team):
+    if team == "infra":
+        return "TEAM_INFRA"
+    elif team == "unseted":
+        return "TEAM_INFRA"
+    else:
+        return "TEAM_{0}".format(team.upper())
 
-def create_jira(jira_client, project_key, issuetype_name, product_arn, account, region, description, resources, severity, title, id):
+def create_jira(jira_client, project_key, issuetype_name, product_arn, account, region, description, resources, severity, title, id, jira_team):
 
     resources = "Resources: %s" % resources if not "default" in product_arn else ""
 
     new_issue = utils.create_ticket(
-        jira_client, project_key, issuetype_name, account, region, description, resources, severity, title, id)
+        jira_client, project_key, issuetype_name, account, region, description, resources, severity, title, id, jira_team)
     utils.update_securityhub(
         securityhub, id, product_arn, "NOTIFIED", 'JIRA Ticket: {0}'.format(new_issue))
     utils.update_jira_assignee(jira_client, new_issue, account)
@@ -78,7 +89,7 @@ def lambda_handler(event, context):  # Main function
     jira_credentials = os.environ.get("JIRA_API_TOKEN")
 
     for finding in event["detail"]["findings"]:
-        account, description, severity, title, finding_id, product_arn, resources, status, recordstate=finding_parser(
+        account, description, severity, title, finding_id, product_arn, resources, status, recordstate, resource_type, repository_name=finding_parser(
             finding)
         try:
             if event["detail-type"] == "Security Hub Findings - Custom Action" and event["detail"]["actionName"] == "CreateJiraIssue":
@@ -87,6 +98,18 @@ def lambda_handler(event, context):  # Main function
                         "Finding workflow is not NEW: %s" % finding_id)
                 if recordstate != "ACTIVE":
                     raise UserWarning("Finding is not ACTIVE: %s" % finding_id)
+                
+                jira_team = ""
+                if resource_type == "AwsEcrContainerImage":
+                    squad_name = utils.get_ecr_repository_tag_value(repository_name, "squad")
+                    jira_team = get_jira_team(squad_name)
+                else:
+                    jira_team = "TEAM_INFRA"
+
+                logger.info("Resource type: %s" % resource_type)
+                logger.info("Creating ticket for {0}".format(finding_id))
+                logger.info("Repository name: %s" % repository_name)
+
                 jira_client=utils.get_jira_client(secretsmanager,jira_instance,jira_credentials)
                 jira_issue=utils.get_jira_finding(
                     jira_client, finding_id, project_key, issuetype_name)
@@ -94,7 +117,7 @@ def lambda_handler(event, context):  # Main function
                     logger.info(
                         "Creating ticket manually for {0}".format(finding_id))
                     create_jira(jira_client, project_key, issuetype_name, product_arn, account,
-                                region, description, resources, severity, title, finding_id)
+                                region, description, resources, severity, title, finding_id, jira_team)
                 else:
                     logger.info("Finding {0} already reported in ticket {1}".format(
                         finding_id, jira_issue))

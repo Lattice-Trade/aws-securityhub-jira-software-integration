@@ -144,7 +144,7 @@ def get_jira_latest_updated_findings(jira_client,project_key, issuetype_name):
     return jira_client.search_issues('Project = {0} AND issuetype = "{1}" AND updated  >= -2w'.format(project_key, issuetype_name), maxResults=False)
 
 # creates ticket based on the Security Hub finding
-def create_ticket(jira_client, project_key, issuetype_name, account, region, description, resources, severity, title, id):
+def create_ticket(jira_client, project_key, issuetype_name, account, region, description, resources, severity, title, id, jira_team):
     digest = get_finding_digest(id)
 
     finding_link = "https://{0}.console.aws.amazon.com/securityhub/home?region={0}#/findings?search=Id%3D%255Coperator%255C%253AEQUALS%255C%253A{1}".format(
@@ -153,7 +153,7 @@ def create_ticket(jira_client, project_key, issuetype_name, account, region, des
         "project": {"key": project_key},
         "issuetype": {"name": issuetype_name},  
         "summary": "AWS Security Issue :: {} :: {} :: {}".format(account, region, title),
-        "labels": ["aws-sec-%s" % digest],
+        "labels": ["aws-sec-%s" % digest, jira_team],
         "priority": {"name": severity.capitalize()},
         #"priority": {"name": "Medium"},
         "description": """ *What is the problem?*
@@ -252,3 +252,36 @@ def get_secret(client, secret_arn, region_name):
             secret = base64.b64decode(
                 get_secret_value_response['SecretBinary'])
     return json.loads(secret)
+
+
+def get_ecr_repository_tag_value(repository_name, tag_key):
+    """
+    Busca el valor de un tag específico para un repositorio ECR dado.
+
+    :param repository_name: Nombre del repositorio ECR.
+    :param tag_key: El key del tag que se busca.
+    :return: El valor del tag si se encuentra, None en caso contrario.
+    """
+    # Crear un cliente de ECR
+    ecr_client = boto3.client('ecr')
+    
+    try:
+        # Obtener la información del repositorio
+        response = ecr_client.describe_repositories(repositoryNames=[repository_name])
+        repository_arn = response['repositories'][0]['repositoryArn']
+        
+        # Obtener los tags del repositorio
+        tags_response = ecr_client.list_tags_for_resource(resourceArn=repository_arn)
+        
+        # Buscar el tag específico y retornar su valor
+        for tag in tags_response['tags']:
+            if tag['Key'] == tag_key:
+                logger.info(f"El tag '{tag_key}' se encontró en el repositorio '{repository_name}'.")
+                return tag['Value']
+    except ecr_client.exceptions.RepositoryNotFoundException:
+        print(f"El repositorio '{repository_name}' no se encontró.")
+    except Exception as e:
+        print(f"Error al buscar el tag '{tag_key}' en el repositorio '{repository_name}': {e}")
+    
+    # Retornar None si no se encuentra el tag
+    return None
