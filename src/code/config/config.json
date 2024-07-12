@@ -1,16 +1,20 @@
 {
     "Controls" : {
         "us-east-2": [
-         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0",
-         "AWSInspector",
-         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/EC2.2",
-         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/SSM.2",
-         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/RDS.4",
-         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/S3.9",
-         "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/S3.5",
-         "arn:aws:securityhub:::security-control/DMS.6",
-         "arn:aws:securityhub:::security-control/CodeBuild.4",
-        "arn:aws:securityhub:::security-control/NetworkFirewall.6"
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0",
+            "AWSInspector",
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/EC2.2",
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/EC2.3",
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/SSM.2",
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/SSM.3",
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/RDS.4",
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/S3.9",
+            "arn:aws:securityhub:::standards/aws-foundational-security-best-practices/v/1.0.0/S3.5",
+            "arn:aws:securityhub:::security-control/DMS.6",
+            "arn:aws:securityhub:::security-control/CodeBuild.4",    
+            "arn:aws:securityhub:::security-control/NetworkFirewall.6",
+            "arn:aws:securityhub:::security-control/SSM.3",
+            "arn:aws:securityhub:::security-control/EC2.3"
      ],
         "default": [
             "aws-foundational-security-best-practices/v/1.0.0/EC2.2",

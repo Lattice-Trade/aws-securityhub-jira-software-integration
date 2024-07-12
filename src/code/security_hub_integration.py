@@ -52,6 +52,8 @@ def get_jira_team(team):
         return "TEAM_INFRA"
     elif team == "unseted":
         return "TEAM_INFRA"
+    elif team == None:
+        return "TEAM_INFRA"
     else:
         return "TEAM_{0}".format(team.upper())
 
