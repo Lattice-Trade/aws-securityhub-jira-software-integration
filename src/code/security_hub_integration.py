@@ -49,13 +49,13 @@ def get_priority(severity):
     
 def get_jira_team(team):
     if team == "infra":
-        return "TEAM_INFRA"
+        return "infra"
     elif team == "unseted":
-        return "TEAM_INFRA"
+        return "infra"
     elif team == None:
-        return "TEAM_INFRA"
+        return "infra"
     else:
-        return "TEAM_{0}".format(team.upper())
+        return team
 
 def create_jira(jira_client, project_key, issuetype_name, product_arn, account, region, description, resources, severity, title, id, jira_team):
 
